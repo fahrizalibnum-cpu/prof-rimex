@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prof Rimex – Monitoring Longsoran OPD 3</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--tx:#1b1f24;--mu:#667085;--bd:#d9dde3;--ac:#1f6feb;--ok:#1a7f37;--wa:#a86a00;--bh:#c62828;--okb:#dcf5e3;--wab:#fff0c9;--bhb:#fde0e0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--card:#1b2027;--tx:#e8eaed;--mu:#9aa4b2;--bd:#2d343d;--ac:#5b9dff;--ok:#4cc26b;--wa:#e0b34a;--bh:#ff7b7b;--okb:#17331f;--wab:#3a2f12;--bhb:#3d1a1a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111418;--card:#1b2027;--tx:#e8eaed;--mu:#9aa4b2;--bd:#2d343d;--ac:#5b9dff;--ok:#4cc26b;--wa:#e0b34a;--bh:#ff7b7b;--okb:#17331f;--wab:#3a2f12;--bhb:#3d1a1a;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;padding-bottom:70px}
+h1{font-size:17px;margin:0}header{padding:12px 14px;border-bottom:1px solid var(--bd);background:var(--card)}header small{color:var(--mu)}
+main{max-width:720px;margin:0 auto;padding:12px}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:12px 4px;font:inherit;font-weight:600}nav button.on{color:var(--ac);box-shadow:inset 0 3px var(--ac)}
+section{display:none}section.on{display:block}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{width:100%;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;font-weight:700;padding:13px;margin-top:6px}.btn.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+.rt{font-weight:700;margin:12px 0 6px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chip{border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}.AMAN{background:var(--okb);color:var(--ok)}.WASPADA{background:var(--wab);color:var(--wa)}.BAHAYA{background:var(--bhb);color:var(--bh)}
+.k{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px;font-size:13px}.k b{display:block;font-size:16px}.k span{color:var(--mu);font-size:11px}
+.ch{height:240px;position:relative}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:center}th{color:var(--mu);font-weight:600}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,Menlo,monospace}
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;display:none;max-width:90%;z-index:9}
+.mu{color:var(--mu);font-size:12px}.del{border:0;background:none;color:var(--bh);font:inherit;font-size:12px}
+</style></head><body>
+<header><h1>⛰️ Prof Rimex</h1><small>Monitoring Longsoran Disposal OPD 3 · Tim Survey IPE – BPL</small></header>
+<main>
+<section id="s-in" class="on"><div class="card">
+<div class="g3"><div><label>Tanggal</label><input type="date" id="tg"></div><div><label>Jam</label><input type="time" id="jm"></div><div><label>Shift</label><select id="sh"><option>Pagi</option><option>Siang</option><option>Sore</option><option>Malam</option></select></div></div>
+<p class="mu">Kosongkan E, N, Z kalau DL itu tidak ditembak. Centang "baseline baru" kalau prisma dipasang ulang/pindah: pergeseran DL itu mulai dari nol lagi.</p>
+<div id="pts"></div>
+<div class="g3" style="margin-top:10px;grid-template-columns:1fr 2fr"><div><label>Cuaca</label><select id="cu"><option>Cerah</option><option>Mendung</option><option>Hujan ringan</option><option>Hujan</option></select></div><div><label>Catatan</label><input id="ct" placeholder="opsional"></div></div>
+<button class="btn" id="sv">Simpan pembacaan</button>
+<p class="mu" id="bn"></p></div>
+<div class="card"><div class="rt" style="margin-top:0">Riwayat pembacaan</div><div id="hist"></div></div></section>
+<section id="s-mo"><div id="cards"></div><div class="card"><div class="rt" style="margin-top:0">DFO horizontal dari baseline (mm)</div><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="card"><div class="rt" style="margin-top:0">DFO vertikal (mm, + naik)</div><div class="ch"><canvas id="c2"></canvas></div></div><div class="card"><div class="rt" style="margin-top:0">Kecepatan vertikal (mm/jam)</div><div class="ch"><canvas id="c3"></canvas></div></div></section>
+<section id="s-lp"><div class="card"><div class="g3" style="grid-template-columns:1fr 1fr"><div><label>Dari</label><input type="date" id="d1"></div><div><label>Sampai</label><input type="date" id="d2"></div></div>
+<div id="rep"></div><div class="rt">Teks untuk grup WA</div><pre id="wa"></pre>
+<button class="btn" id="cp">Salin teks WA</button><button class="btn s" id="csv">Unduh data (CSV)</button></div></section>
+<section id="s-hs"><div class="card"><div class="rt" style="margin-top:0">Hasil akhir (semua data)</div><button class="btn" id="pdf">Unduh PDF (tabel + grafik)</button><div id="hasil"></div></div></section>
+<section id="s-st"><div class="card"><div class="rt" style="margin-top:0">Akses</div><div class="g3" style="grid-template-columns:1fr 1fr"><div><label>Kode tim</label><input id="kt" type="password"></div><div><label>PIN admin (opsional)</label><input id="ka" type="password"></div></div><button class="btn s" id="ks">Simpan kode</button></div><div class="card"><div class="rt" style="margin-top:0">Ambang status (kosongkan jika belum ada; isi sesuai SOP/geotech)</div>
+<div class="g3" style="grid-template-columns:1fr 1fr"><div><label>Waspada DFO 3D (mm)</label><input id="wd" inputmode="decimal"></div><div><label>Bahaya DFO 3D (mm)</label><input id="bd" inputmode="decimal"></div><div><label>Waspada |kecepatan| (mm/jam)</label><input id="wv" inputmode="decimal"></div><div><label>Bahaya |kecepatan| (mm/jam)</label><input id="bv" inputmode="decimal"></div></div>
+<div class="rt">Lokasi reflector</div><div id="locs"></div><button class="btn" id="sc">Simpan pengaturan</button></div>
+<div class="card mu">Baseline tiap DL = pembacaan pertamanya. DFO = pergeseran dari baseline, DFP = dari pembacaan sebelumnya, Kum. = jumlah DFP, kecepatan = DFP vertikal ÷ selisih jam (sama seperti format laporan).</div></section>
+</main>
+<nav><button data-t="in" class="on">Input</button><button data-t="mo">Pantau</button><button data-t="lp">Laporan</button><button data-t="hs">Hasil</button><button data-t="st">Atur</button></nav>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+const API=(()=>{try{const p=new URLSearchParams(location.search),q=p.get('api'),k=p.get('kt');if(k)localStorage.setItem('kt',JSON.stringify(k));if(q){localStorage.setItem('api',q);return q}return localStorage.getItem('api')||''}catch(e){return''}})();
+const N=5,COL=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd'];
+let R=[],CFG={wd:null,bd:null,wv:null,bv:null,loc:['Disposal OPD 3','Disposal OPD 3','Disposal OPD 3','Disposal OPD 3','PIT']},db=null,CH=[],armed=null,CAN=true;
+const $=s=>document.querySelector(s),f=(n,d=1)=>Number(n).toFixed(d),pad=n=>String(n).padStart(2,'0');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lg=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},ls=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const lab=ts=>{const d=new Date(ts);return pad(d.getUTCDate())+'/'+pad(d.getUTCMonth()+1)+' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())};
+const P=(d,t)=>{const[a,b,c]=d.split('-').map(Number),[h,m]=t.split(':').map(Number);return Date.UTC(a,b-1,c,h,m)};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2800)};
+const loc=k=>CFG.loc[k]?' – '+CFG.loc[k]:'';
+const dir=(de,dn)=>{const ns=dn>.05?'North':dn<-.05?'South':'',ew=de>.05?'East':de<-.05?'West':'';return(ns+' '+ew).trim()||'-'};
+const dd=(a,b)=>{const de=(a.e-b.e)*1000,dn=(a.n-b.n)*1000;return{h:Math.hypot(de,dn),v:(a.z-b.z)*1000,dir:dir(de,dn)}};
+function calc(){const base=Array(N).fill(null),prev=Array(N).fill(null),cum=[...Array(N)].map(()=>[0,0]);
+return R.map(r=>{const x=[];for(let k=0;k<N;k++){const p=r.pts.slice(3*k,3*k+3);if(p.some(v=>v==null)){x.push(null);continue}
+const o={e:p[0],n:p[1],z:p[2],ts:r.ts};if(!base[k]||(r.nb||[]).includes(k)){base[k]=prev[k]=o;cum[k]=[0,0];x.push({base:1});continue}
+const dp=dd(o,prev[k]),dof=dd(o,base[k]),hrs=(r.ts-prev[k].ts)/36e5;cum[k][0]+=dp.h;cum[k][1]+=Math.abs(dp.v);
+x.push({hrs,dp,dof,vel:hrs>0?dp.v/hrs:0,cH:cum[k][0],cV:cum[k][1],d3:Math.hypot(dof.h,dof.v)});prev[k]=o}
+return{r,x}})}
+const st=x=>{if(!x||x.base)return'';const a=Math.abs(x.vel);if((CFG.bd!=null&&x.d3>=CFG.bd)||(CFG.bv!=null&&a>=CFG.bv))return'BAHAYA';if((CFG.wd!=null&&x.d3>=CFG.wd)||(CFG.wv!=null&&a>=CFG.wv))return'WASPADA';return(CFG.wd!=null||CFG.bd!=null||CFG.wv!=null||CFG.bv!=null)?'AMAN':''};
+const chip=s=>s?`<span class="chip ${s}">${s}</span>`:'';
+const latest=(C,k)=>{for(let i=C.length-1;i>=0;i--)if(C[i].x[k])return C[i];return null};
+function build(){let h='';for(let k=0;k<N;k++)h+=`<div class="rt" style="color:${COL[k]}">DL ${k+1}<span class="mu" id="lc${k}"></span><label style="float:right;display:inline-flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" class="rb" style="width:auto;margin:0">baseline baru</label></div><div class="g3">${['E','N','Z'].map(a=>`<input class="pt" inputmode="decimal" aria-label="DL ${k+1} ${a}">`).join('')}</div>`;$('#pts').innerHTML=h;
+let h2='';for(let k=0;k<N;k++)h2+=`<label>DL ${k+1}</label><input id="li${k}" placeholder="lokasi pemasangan" style="margin-bottom:8px">`;$('#locs').innerHTML=h2;
+const n=new Date(),dl=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());$('#tg').value=dl(n);$('#jm').value=pad(n.getHours())+':'+pad(n.getMinutes());const hr=n.getHours();$('#sh').value=hr<11?'Pagi':hr<15?'Siang':hr<19?'Sore':'Malam';
+const mon=new Date(n);mon.setDate(n.getDate()-((n.getDay()+6)%7));const sun=new Date(mon);sun.setDate(mon.getDate()+6);$('#d1').value=dl(mon);$('#d2').value=dl(sun)}
+async function save(){const inp=[...document.querySelectorAll('.pt')],v=[];let any=0;
+for(let k=0;k<N;k++){const t=inp.slice(3*k,3*k+3).map(i=>i.value.trim());if(t.every(s=>!s)){v.push(null,null,null);continue}const n=t.map(s=>parseFloat(s.replace(',','.')));if(n.some(isNaN))return toast('DL '+(k+1)+': E, N, Z harus terisi semua');v.push(...n);any=1}
+if(!any)return toast('Isi minimal satu DL');const ts=P($('#tg').value,$('#jm').value);if(isNaN(ts))return toast('Tanggal/jam belum benar');
+const nb=[...document.querySelectorAll('.rb')].map((c,k)=>c.checked&&v[3*k]!=null?k:-1).filter(k=>k>=0);const o={ts,shift:$('#sh').value,pts:v,cuaca:'',cat:$('#ct').value.trim(),nb};
+if(API){const r=await api({action:'add',data:o});if(!r.ok)return toast(r.err||'Gagal simpan');await pull()}else{o.id='l'+ts;R.push(o);R.sort((a,b)=>a.ts-b.ts);ls('r',R)}
+inp.forEach(i=>i.value='');document.querySelectorAll('.rb').forEach(c=>c.checked=false);$('#ct').value='';toast('Tersimpan ✓');render()}
+async function delr(id){if(armed!==id){armed=id;render();return}armed=null;if(API){const r=await api({action:'del',id});if(!r.ok)toast(r.err||'Gagal hapus');await pull()}else{R=R.filter(r=>r.id!==id);ls('r',R);render()}}
+async function savec(){const g=i=>{const s=$('#'+i).value.trim().replace(',','.');return s?parseFloat(s):null};const c={wd:g('wd'),bd:g('bd'),wv:g('wv'),bv:g('bv'),loc:[0,1,2,3,4].map(k=>$('#li'+k).value.trim())};if([c.wd,c.bd,c.wv,c.bv].some(x=>x!=null&&isNaN(x)))return toast('Ambang harus angka');
+CFG=c;if(API){const r=await api({action:'cfg',data:c});if(!r.ok)return toast(r.err||'Gagal simpan')}else ls('c',c);toast('Pengaturan tersimpan ✓');render()}
+function render(){const C=calc();
+document.querySelectorAll('.pt').forEach((i,j)=>{const l=latest(C,Math.floor(j/3));i.placeholder=l?f(l.r.pts[j],3):['E','N','Z'][j%3]+' (m)'});
+for(let k=0;k<N;k++)$('#lc'+k).textContent=loc(k);
+$('#bn').textContent=R.length?R.length+' sesi tercatat. Baseline DL = pembacaan pertama, atau yang dicentang "baseline baru".':'Belum ada data. Pembacaan pertama tiap DL jadi baseline.';
+$('#hist').innerHTML=R.length?[...R].reverse().slice(0,15).map(r=>`<div class="row" style="border-bottom:1px solid var(--bd);padding:6px 0"><span>${lab(r.ts)} · ${esc(r.shift)} · DL ${[0,1,2,3,4].filter(k=>r.pts[3*k]!=null).map(k=>k+1).join(', ')}${(r.nb||[]).length?' · baseline baru DL '+r.nb.map(k=>k+1).join(', '):''}${r.cat?'<br><span class="mu">'+esc(r.cat)+'</span>':''}</span>${CAN?`<button class="del" data-id="${r.id}">${armed===r.id?'Yakin hapus?':'Hapus'}</button>`:''}</div>`).join(''):'<span class="mu">Kosong</span>';
+$('#cards').innerHTML=R.length?[...Array(N).keys()].map(k=>{const c=latest(C,k);if(!c)return`<div class="card"><b style="color:${COL[k]}">DL ${k+1}<span class="mu">${esc(loc(k))}</span></b><div class="mu">Belum ada data</div></div>`;const x=c.x[k];
+const body=x.base?`<div class="mu">Baseline: ${lab(c.r.ts)}. Belum ada pembacaan lanjutan.</div>`:`<div class="mu">${lab(c.r.ts)} · ${f(x.hrs)} jam dari pembacaan sebelumnya</div><div class="k"><div><b>${f(x.dof.h)}</b><span>DFO horiz mm · ${x.dof.dir}</span></div><div><b>${f(x.dof.v,0)}</b><span>DFO vert mm · ${x.dof.v>=0?'naik':'turun'}</span></div><div><b>${f(x.vel,2)}</b><span>mm/jam</span></div></div><div class="mu" style="margin-top:4px">DFP: H ${f(x.dp.h)} (${x.dp.dir}), V ${f(x.dp.v,0)} · Kum.: H ${f(x.cH)} / V ${f(x.cV,0)} mm</div>`;
+return`<div class="card"><div class="row"><b style="color:${COL[k]}">DL ${k+1}<span class="mu">${esc(loc(k))}</span></b>${chip(st(x))}</div>${body}</div>`}).join(''):'<div class="card mu">Belum ada data. Isi di tab Input.</div>';
+['wd','bd','wv','bv'].forEach(i=>{if(document.activeElement.id!==i)$('#'+i).value=CFG[i]??''});CFG.loc.forEach((l,k)=>{if(document.activeElement.id!=='li'+k)$('#li'+k).value=l||''});
+if(window.Chart){const cs=getComputedStyle(document.documentElement);Chart.defaults.color=cs.getPropertyValue('--mu').trim();Chart.defaults.borderColor=cs.getPropertyValue('--bd').trim();
+const mk=(i,fn)=>{const d={labels:C.map(c=>lab(c.r.ts)),datasets:[...Array(N).keys()].map(k=>({label:'DL '+(k+1),data:C.map(c=>c.x[k]?fn(c.x[k]):null),borderColor:COL[k],backgroundColor:COL[k],tension:.2,pointRadius:3,spanGaps:true}))};if(CH[i]){CH[i].data=d;CH[i].update('none')}else CH[i]=new Chart($('#c'+(i+1)),{type:'line',data:d,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}})};
+mk(0,x=>x.base?0:x.dof.h);mk(1,x=>x.base?0:x.dof.v);mk(2,x=>x.base?null:x.vel)}
+report(C);hasil(C)}
+const HEAD=['Tanggal/Jam','Durasi (jam)','Easting','Northing','Elev.','DFP H (mm)','DFP V (mm)','Arah DFP','DFO H (mm)','DFO V (mm)','Arah DFO','Kec. (mm/jam)','Kum. H (mm)','Kum. V (mm)'];
+const ful=ts=>{const d=new Date(ts);return pad(d.getUTCDate())+'/'+pad(d.getUTCMonth()+1)+'/'+String(d.getUTCFullYear()).slice(2)+' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())};
+function tbl(C,k){const o=[];for(const c of C){const x=c.x[k];if(!x)continue;const p=c.r.pts.slice(3*k,3*k+3).map(v=>f(v,3)),t=ful(c.r.ts);o.push(x.base?[t,'-',...p,'Baseline','-','-','-','-','-','-','-','-']:[t,f(x.hrs),...p,f(x.dp.h),f(x.dp.v,0),x.dp.dir,f(x.dof.h),f(x.dof.v,0),x.dof.dir,f(x.vel,2),f(x.cH),f(x.cV,0)])}return o}
+function hasil(C){$('#hasil').innerHTML=[...Array(N).keys()].map(k=>{const r=tbl(C,k);return`<div class="rt" style="color:${COL[k]}">DL ${k+1}${esc(loc(k))}</div>`+(r.length?`<div style="overflow-x:auto"><table style="font-size:11px;white-space:nowrap"><tr>${HEAD.map(h=>`<th>${h}</th>`).join('')}</tr>${r.map(w=>`<tr>${w.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</table></div>`:'<p class="mu">Belum ada data</p>')}).join('')}
+async function makePdf(){try{const J=window.jspdf&&window.jspdf.jsPDF;if(!J)return toast('Pembuat PDF belum termuat, coba lagi');const C=calc(),doc=new J({orientation:'landscape',unit:'mm',format:'a4'}),n=new Date(),tg=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+doc.setFontSize(13);doc.text('Daily Displacement Monitoring - Disposal OPD 3',14,12);doc.setFontSize(9);doc.text('Tim Survey IPE - BPL | Dicetak '+tg+' | DFO = dari baseline, DFP = dari pembacaan sebelumnya, Kum. = jumlah DFP',14,17);let y=24;
+for(let k=0;k<N;k++){const r=tbl(C,k);if(!r.length)continue;if(y>165){doc.addPage();y=14}doc.setFontSize(10);doc.text('DL '+(k+1)+(CFG.loc[k]?' - '+CFG.loc[k]:''),14,y);doc.autoTable({head:[HEAD],body:r,startY:y+2,margin:{left:14,right:14},styles:{fontSize:7,cellPadding:1.2,halign:'center'},headStyles:{fillColor:[31,78,120]}});y=doc.lastAutoTable.finalY+8}
+if(window.Chart&&C.length){doc.addPage();doc.setFontSize(13);doc.text('Grafik Monitoring - Disposal OPD 3',14,12);
+const T='#333',cf=[['DFO Horizontal dari Baseline (mm)',x=>x.base?0:x.dof.h],['DFO Vertikal (mm, + naik)',x=>x.base?0:x.dof.v],['Kecepatan Vertikal (mm/jam)',x=>x.base?null:x.vel]];
+cf.forEach(([ti,fn],i)=>{const cv=document.createElement('canvas');cv.width=900;cv.height=380;const c=new Chart(cv,{type:'line',data:{labels:C.map(w=>lab(w.r.ts)),datasets:[...Array(N).keys()].map(k=>({label:'DL '+(k+1),data:C.map(w=>w.x[k]?fn(w.x[k]):null),borderColor:COL[k],backgroundColor:COL[k],tension:.2,pointRadius:3,spanGaps:true}))},options:{responsive:false,animation:false,color:T,plugins:{legend:{position:'bottom',labels:{color:T}},title:{display:true,text:ti,color:T}},scales:{x:{ticks:{color:T},grid:{color:'#ddd'}},y:{ticks:{color:T},grid:{color:'#ddd'}}}},plugins:[{id:'bg',beforeDraw:q=>{q.ctx.save();q.ctx.fillStyle='#fff';q.ctx.fillRect(0,0,q.width,q.height);q.ctx.restore()}}]});doc.addImage(c.toBase64Image('image/png',1),'PNG',i===1?150:14,i<2?20:84,128,54);c.destroy()})}
+doc.save('Monitoring-OPD3-'+tg+'.pdf')}catch(e){toast('PDF gagal dibuat')}}
+function report(C){const a=P($('#d1').value,'00:00'),b=P($('#d2').value,'23:59')+59999,W=C.filter(c=>c.r.ts>=a&&c.r.ts<=b);
+if(!C.length){$('#rep').innerHTML='<p class="mu">Belum ada data.</p>';$('#wa').textContent='';return}
+const rows=[...Array(N).keys()].map(k=>{const w=W.filter(c=>c.x[k]&&!c.x[k].base);const l=w[w.length-1];return{k,x:l&&l.x[k],mv:Math.max(0,...w.map(c=>Math.abs(c.x[k].vel)))}});
+const nb=rows.filter(r=>st(r.x)==='BAHAYA').length,nw=rows.filter(r=>st(r.x)==='WASPADA').length;
+const kes=nb?`Ada ${nb} DL BAHAYA. Segera koordinasi dengan pengawas dan geotech.`:nw?`Ada ${nw} DL WASPADA. Pantau lebih rapat.`:'';
+$('#rep').innerHTML=`<p class="mu">${W.length} sesi di periode ini</p><table><tr><th>DL</th><th>DFO H</th><th>DFO V</th><th>Kum. H/V</th><th>Kec. maks</th></tr>${rows.map(r=>r.x?`<tr><td>${r.k+1} ${chip(st(r.x))}</td><td>${f(r.x.dof.h)}</td><td>${f(r.x.dof.v,0)}</td><td>${f(r.x.cH)}/${f(r.x.cV,0)}</td><td>${f(r.mv,2)}</td></tr>`:`<tr><td>${r.k+1}</td><td colspan="4" class="mu">tidak ada pembacaan</td></tr>`).join('')}</table>${kes?`<p><b>Kesimpulan:</b> ${kes}</p>`:''}`;
+const d=s=>{const [y,m,t]=s.split('-');return t+'/'+m};
+$('#wa').textContent=`*Monitoring Longsoran Disposal OPD 3*\nPeriode: ${d($('#d1').value)} - ${d($('#d2').value)}/${$('#d2').value.slice(0,4)}\nJumlah sesi pembacaan: ${W.length}\n`+rows.map(r=>r.x?`DL ${r.k+1}: DFO H ${f(r.x.dof.h)} mm (${r.x.dof.dir}), V ${f(r.x.dof.v,0)} mm | Kum. H ${f(r.x.cH)} / V ${f(r.x.cV,0)} mm | Kec. maks ${f(r.mv,2)} mm/jam${st(r.x)?' | '+st(r.x):''}`:`DL ${r.k+1}: tidak ada pembacaan`).join('\n')+(kes?`\n${kes}`:'')+`\nGrafik terlampir.`}
+function csv(){const h=['waktu','shift','catatan'];for(let k=1;k<=N;k++)h.push('DL'+k+'_E','DL'+k+'_N','DL'+k+'_Z');return h.join(',')+'\n'+R.map(r=>[lab(r.ts),r.shift,'"'+String(r.cat||'').replace(/"/g,'""')+'"',...r.pts.map(v=>v==null?'':v)].join(',')).join('\n')}
+async function api(b){try{b.kt=lg('kt','');b.adm=lg('adm','');const r=await fetch(API,{method:'POST',body:JSON.stringify(b)});return await r.json()}catch(e){return{ok:false,err:'Tidak ada koneksi'}}}
+async function pull(){try{const r=await fetch(API+'?kt='+encodeURIComponent(lg('kt','')));const j=await r.json();if(j.ok){R=j.readings.filter(r=>Array.isArray(r.pts)&&r.pts.length===15).sort((a,b)=>a.ts-b.ts);if(j.config)CFG=Object.assign(CFG,j.config);render()}else toast(j.err||'Ditolak')}catch(e){}}
+async function init(){build();R=lg('r',[]);CFG=Object.assign(CFG,lg('c',{}));render();
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,section').forEach(e=>e.classList.remove('on'));b.classList.add('on');$('#s-'+b.dataset.t).classList.add('on');render()});
+$('#sv').onclick=save;$('#pdf').onclick=makePdf;$('#sc').onclick=savec;$('#ks').onclick=()=>{ls('kt',$('#kt').value.trim());ls('adm',$('#ka').value.trim());CAN=!API||!!lg('adm','');toast('Kode tersimpan');API?pull():render()};$('#kt').value=lg('kt','');$('#ka').value=lg('adm','');$('#d1').onchange=$('#d2').onchange=render;$('#hist').onclick=e=>{const b=e.target.closest('.del');if(b)delr(b.dataset.id)};
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText($('#wa').textContent);toast('Teks disalin ✓')}catch(e){const r=document.createRange();r.selectNodeContents($('#wa'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Tahan teks lalu pilih Salin')}};
+$('#csv').onclick=async()=>{try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv()],{type:'text/csv'}));a.download='monitoring-opd3.csv';a.click()}catch(e){toast('Gagal unduh')}};
+CAN=!API||!!lg('adm','');if(API){await pull();setInterval(pull,20000)}}
+init();
+</script></body></html>
